@@ -1,6 +1,14 @@
 # React Resizer
 
-Resizable component
+Resizable component. But first please ask yourself if you need it, because you
+can just set:
+```css
+.element {
+  resize: both;
+  overflow: auto;
+}
+```
+to achieve similar effect with just css.
 
 ## Install
 
