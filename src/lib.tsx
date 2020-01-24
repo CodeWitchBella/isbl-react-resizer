@@ -1,5 +1,9 @@
-import React from 'react'
+import React, { PropsWithChildren } from 'react'
 
-export default function Resizer() {
-    return <div>Hello world</div>;
+export type ResizerDirection = 'both' | 'none' | 'horizontal' | 'vertical'
+export default function Resizer({
+  children,
+  direction = 'both',
+}: PropsWithChildren<{ direction?: ResizerDirection }>) {
+  return <div>{children}</div>
 }
