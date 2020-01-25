@@ -37,6 +37,20 @@ function CenteredHandle() {
     </div>
   )
 }
+function SidebarHandle() {
+  return (
+    <div
+      style={{
+        height: '100%',
+        width: 10,
+        background: 'black',
+        right: 0,
+        position: 'absolute',
+      }}
+      {...useResizerHandle('horizontal')}
+    />
+  )
+}
 
 function App() {
   return (
@@ -48,7 +62,6 @@ function App() {
           width: 500,
           height: 200,
           margin: 20,
-          maxWidth: 700,
         }}
       >
         Hello world
@@ -109,6 +122,18 @@ function App() {
         }}
       >
         <CenteredHandle />
+      </ResizerContainer>
+      <ResizerContainer
+        style={{
+          width: 200,
+          height: 300,
+          background: 'gray',
+          position: 'relative',
+          minWidth: 200,
+          maxWidth: 700,
+        }}
+      >
+        <SidebarHandle />
       </ResizerContainer>
     </div>
   )
