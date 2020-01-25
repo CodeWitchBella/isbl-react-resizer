@@ -9,7 +9,12 @@ import Resizer, {
 function CustomHandle({ direction }: { direction: ResizerDirection }) {
   return (
     <div
-      style={{ background: 'white', display: 'inline-block', margin: 10 }}
+      style={{
+        background: 'white',
+        display: 'inline-block',
+        margin: 10,
+        touchAction: 'none',
+      }}
       {...useResizerHandle(direction)}
     >
       {direction}
@@ -20,7 +25,12 @@ function CustomHandle({ direction }: { direction: ResizerDirection }) {
 function CenteredHandle() {
   return (
     <div
-      style={{ background: 'white', display: 'block', margin: 10 }}
+      style={{
+        background: 'white',
+        display: 'block',
+        margin: 10,
+        touchAction: 'none',
+      }}
       {...useResizerHandle()}
     >
       handle
@@ -30,7 +40,7 @@ function CenteredHandle() {
 
 function App() {
   return (
-    <div style={{ height: 5000, width: 5000 }}>
+    <div>
       <Resizer
         style={{
           background: 'green',

@@ -17,6 +17,7 @@ const handleBaseStyle: React.CSSProperties = {
   background: 'black',
   color: 'white',
   cursor: 'pointer',
+  touchAction: 'none',
 }
 
 const ResizerContext = createContext<null | {
@@ -111,8 +112,8 @@ export function useResizerHandle(direction: ResizerDirection = 'both') {
         if (evt.pointerId !== downEvent.pointerId) return
         evt.preventDefault()
         evt.stopPropagation()
-        const width = boundingRect.width + evt.screenX - downEvent.screenX
-        const height = boundingRect.height + evt.screenY - downEvent.screenY
+        const width = boundingRect.width + evt.clientX - downEvent.clientX
+        const height = boundingRect.height + evt.clientY - downEvent.clientY
         setSize(
           direction === 'both'
             ? { width, height }
