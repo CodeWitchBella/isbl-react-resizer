@@ -29,54 +29,73 @@ export default React.forwardRef<HTMLDivElement | null, ResizerProps>(
     { children, direction = 'both', style = {}, ...rest },
     externalRef,
   ) {
-    const [size, setSize] = useState<{ width?: number; height?: number }>({})
-    const containerRef = useRef<HTMLDivElement>()
-
     return (
-      <div
+      <ResizerContainer
         {...rest}
-        ref={useComposeRefs(containerRef, externalRef)}
-        style={{
-          position: 'relative',
-          ...style,
-          ...size,
-          boxSizing: 'border-box',
-        }}
+        style={{ ...style, position: 'relative' }}
+        ref={externalRef}
       >
-        <ResizerContext.Provider
-          value={useMemo(
-            () => ({
-              containerRef,
-              setSize: (v: { width?: number; height?: number }) =>
-                setSize(prev => ({ ...prev, ...v })),
-            }),
-            [],
-          )}
-        >
-          {children}
-          {/* TODO: maybe instead of unicode use SVGs? But who cares, users will probably override it anyway */}
+        {children}
+        {direction === 'horizontal' || direction === 'both' ? (
           <ResizerHandle
             direction="horizontal"
             style={{ left: '100%', top: '50%' }}
           >
             ↔
           </ResizerHandle>
+        ) : null}
+        {direction === 'vertical' || direction === 'both' ? (
           <ResizerHandle
             direction="vertical"
             style={{ left: '50%', top: '100%' }}
           >
             ↕
           </ResizerHandle>
+        ) : null}
+        {direction === 'both' ? (
           <ResizerHandle direction="both" style={{ left: '100%', top: '100%' }}>
             ⤡
           </ResizerHandle>
-        </ResizerContext.Provider>
-      </div>
+        ) : null}
+      </ResizerContainer>
     )
   },
 )
 
-function useResizerHandle(direction: ResizerDirection = 'both') {
+export const ResizerContainer = React.forwardRef<
+  HTMLDivElement | null,
+  DivProps
+>(({ children, style, ...rest }, externalRef) => {
+  const [size, setSize] = useState<{ width?: number; height?: number }>({})
+  const containerRef = useRef<HTMLDivElement>()
+
+  return (
+    <div
+      {...rest}
+      ref={useComposeRefs(containerRef, externalRef)}
+      style={{
+        ...style,
+        ...size,
+        boxSizing: 'border-box',
+      }}
+    >
+      <ResizerContext.Provider
+        value={useMemo(
+          () => ({
+            containerRef,
+            setSize: (v: { width?: number; height?: number }) =>
+              setSize(prev => ({ ...prev, ...v })),
+          }),
+          [],
+        )}
+      >
+        {children}
+      </ResizerContext.Provider>
+    </div>
+  )
+})
+
+export function useResizerHandle(direction: ResizerDirection = 'both') {
   const ctx = useContext(ResizerContext)
   if (!ctx)
     throw new Error(

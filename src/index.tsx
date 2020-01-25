@@ -1,10 +1,106 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
-import Resizer from './lib'
+import Resizer, {
+  ResizerDirection,
+  useResizerHandle,
+  ResizerContainer,
+} from './lib'
+
+function CustomHandle({ direction }: { direction: ResizerDirection }) {
+  return (
+    <div
+      style={{ background: 'white', display: 'inline-block', margin: 10 }}
+      {...useResizerHandle(direction)}
+    >
+      {direction}
+    </div>
+  )
+}
+
+function CenteredHandle() {
+  return (
+    <div
+      style={{ background: 'white', display: 'block', margin: 10 }}
+      {...useResizerHandle()}
+    >
+      handle
+    </div>
+  )
+}
 
 function App() {
   return (
-    <Resizer style={{ background: 'green', padding: 20 }}>Hello world</Resizer>
+    <div style={{ height: 5000, width: 5000 }}>
+      <Resizer
+        style={{
+          background: 'green',
+          padding: 20,
+          width: 500,
+          height: 200,
+          margin: 20,
+          maxWidth: 700,
+        }}
+      >
+        Hello world
+      </Resizer>
+      <Resizer
+        direction="vertical"
+        style={{
+          background: 'green',
+          padding: 20,
+          width: 500,
+          height: 200,
+          margin: 20,
+        }}
+      >
+        Hello world
+      </Resizer>
+
+      <Resizer
+        direction="horizontal"
+        style={{
+          background: 'green',
+          padding: 20,
+          width: 500,
+          height: 200,
+          margin: 20,
+        }}
+      >
+        Hello world
+      </Resizer>
+      <ResizerContainer style={{ width: 700, background: 'papayawhip' }}>
+        Hladinou jí též nevrátil plyn i závodníci patentovanou týkaly vrátím
+        opracovaných střední, která větví lokální za připomínající školy.
+        Kolektivního masovým struktury kterou barvy hry veřejné městu. Se
+        dobytým jezera. Volba ekologii mohlo pán pracovat mezistanice ta větví,
+        vascem charisma rozdíl, opravdu z úkazu pouze a zkrátka narušily. Té ně
+        také starat vznikly ty evropy. Nim vydáte si indiánský hrozbou. Zasáhla
+        stavba uvádí míře ruce brzy energická i nejrůznější opakujete po klec
+        rozšiřující, ní objevena současnost, čeští z naplánujte materiální
+        pomáhá, výpravy či jedno. Stal rezigoval rukavicích, velký o ní jsme
+        těch z podlehly nejvíc proběhly schopny, by kam naděje a zdecimovaly
+        postižením směrem řeči evropě možnou: je červeně ho. Stylu je žít vína,
+        ne ho dní založila pouhé. U dala však proudění v navržené špatného
+        ostrovech oceán polohu chvílích dlouhá k s nebo daří neřeknou září
+        zveřejněná tun motýlů, světelných s úsporám nevadí a zároveň. K výpary
+        mlze umějí tkaní vesuvu i patronuje orgánu s tratě klecích k vzbudil.
+        <CustomHandle direction="vertical" />
+        <CustomHandle direction="horizontal" />
+        <CustomHandle direction="both" />
+      </ResizerContainer>
+      <ResizerContainer
+        style={{
+          width: 700,
+          height: 700,
+          display: 'flex',
+          background: 'lightblue',
+          alignItems: 'flex-end',
+          justifyContent: 'flex-end',
+        }}
+      >
+        <CenteredHandle />
+      </ResizerContainer>
+    </div>
   )
 }
 

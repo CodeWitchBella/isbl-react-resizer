@@ -20,6 +20,8 @@ or
 
 ## Usage
 
+Basic usage which allows styling of the container but not of separate handles:
+
 ```js
 import Resizer from '@codewitchbella/react-resizer'
 
@@ -29,6 +31,40 @@ function MyComponent() {
     </Resizer>
 }
 ```
+
+Usage which allows to customize handles:
+
+```js
+import Resizer, {
+  ResizerDirection,
+  useResizerHandle,
+  ResizerContainer,
+} from '@codewitchbella/react-resizer'
+
+function CustomHandle({ direction }: { direction: ResizerDirection }) {
+  return (
+    <div
+      style={{ background: 'white', display: 'inline-block' }}
+      {...useResizerHandle(direction)}
+    >
+      {direction}
+    </div>
+  )
+}
+
+function MyComponent() {
+  <ResizerContainer style={{ width: 700, background: 'papayawhip' }}>
+    Lorem ipsum dolor sit amet
+    <CustomHandle direction="vertical" />
+    <CustomHandle direction="horizontal" />
+    <CustomHandle direction="both" />
+  </ResizerContainer>
+}
+```
+
+Main rule is that `useResizerHandle` can only be used in subtree of 
+`ResizerContainer` and that return value has to be spread on DOM element which
+is supposed to act as the handle.
 
 ## API
 
