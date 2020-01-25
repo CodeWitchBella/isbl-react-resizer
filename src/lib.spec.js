@@ -27,6 +27,7 @@ for (const browserType of ['chromium', 'firefox']) {
 
     async function drag(page, selector, relative) {
       const handle = await page.$(selector)
+      await handle.scrollIntoViewIfNeeded()
       const handleBB = await handle.boundingBox()
       const x = handleBB.x + handleBB.width / 2
       const y = handleBB.y + handleBB.height / 2
@@ -102,6 +103,39 @@ for (const browserType of ['chromium', 'firefox']) {
       expect((await getBB(page, '#resizer-horizontal')).width).toBe(700)
       // but not height
       expect((await getBB(page, '#resizer-horizontal')).height).toBe(200)
+    })
+
+    test('Custom handles (sidebar) should work', async () => {
+      const page = await context.newPage()
+      await page.goto('http://localhost:3000/')
+
+      // width before changes should respect css
+      expect((await getBB(page, '#sidebar')).width).toBe(200)
+
+      // drag horizontal resizer
+      await drag(page, '#sidebar-handle', {
+        x: 200,
+        y: 200,
+      })
+
+      // expect it to change width
+      expect((await getBB(page, '#sidebar')).width).toBe(400)
+      // but not height
+      expect((await getBB(page, '#sidebar')).height).toBe(300)
+
+      // it should not grow over max-width
+      await drag(page, '#sidebar-handle', {
+        x: 1000,
+        y: 200,
+      })
+      expect((await getBB(page, '#sidebar')).width).toBe(700)
+
+      // also should not be smaller than min-width
+      await drag(page, '#sidebar-handle', {
+        x: -1000,
+        y: 200,
+      })
+      expect((await getBB(page, '#sidebar')).width).toBe(200)
     })
 
     afterAll(async () => {

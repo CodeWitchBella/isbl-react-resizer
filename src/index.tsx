@@ -40,11 +40,13 @@ function CenteredHandle() {
 function SidebarHandle() {
   return (
     <div
+      id="sidebar-handle"
       style={{
-        height: '100%',
         width: 10,
         background: 'black',
         right: 0,
+        top: 0,
+        bottom: 0,
         position: 'absolute',
       }}
       {...useResizerHandle('horizontal')}
@@ -127,6 +129,7 @@ function App() {
         <CenteredHandle />
       </ResizerContainer>
       <ResizerContainer
+        id="sidebar"
         style={{
           width: 200,
           height: 300,
@@ -136,7 +139,14 @@ function App() {
           maxWidth: 700,
         }}
       >
-        <SidebarHandle />
+        <ul>
+          <li>Other</li>
+          <li>Items</li>
+        </ul>
+        <div>
+          Nest how you want
+          <SidebarHandle />
+        </div>
       </ResizerContainer>
     </div>
   )
