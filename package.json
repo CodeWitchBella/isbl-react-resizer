@@ -3,10 +3,10 @@
   "version": "0.1.0",
   "description": "Resizer component for react",
   "source": "src/lib.tsx",
-  "main": "build/index.js",
-  "module": "build/index.mjs",
-  "unpkg": "build/index.umd.js",
-  "types": "build/index.d.ts",
+  "main": "build/lib.js",
+  "module": "build/lib.mjs",
+  "unpkg": "build/lib.umd.js",
+  "types": "build/lib.d.ts",
   "repository": "https://github.com/CodeWitchBella/react-resizer.git",
   "author": "Isabella Skořepová",
   "license": "MIT",
@@ -16,6 +16,11 @@
     "prepare": "microbundle",
     "test": "react-scripts test"
   },
+  "files": [
+    "build/lib.*",
+    "src/lib.tsx",
+    "README.md"
+  ],
   "peerDependencies": {
     "react": "^16.12.0"
   },
