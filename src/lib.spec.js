@@ -132,7 +132,7 @@ for (const browserType of ['chromium', 'firefox']) {
 
       // also should not be smaller than min-width
       await drag(page, '#sidebar-handle', {
-        x: -1000,
+        x: -600,
         y: 200,
       })
       expect((await getBB(page, '#sidebar')).width).toBe(200)

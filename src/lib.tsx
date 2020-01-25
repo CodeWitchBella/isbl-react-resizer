@@ -1,15 +1,18 @@
 import React, {
   PropsWithChildren,
-  useState,
-  useRef,
   Ref,
   MutableRefObject,
-  useCallback,
   RefObject,
-  createContext,
-  useMemo,
-  useContext,
 } from 'react'
+
+const {
+  useCallback,
+  useMemo,
+  useState,
+  useRef,
+  useContext,
+  createContext,
+} = React
 
 const handleBaseStyle: React.CSSProperties = {
   position: 'absolute',
