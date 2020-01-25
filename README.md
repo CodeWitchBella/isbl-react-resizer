@@ -34,22 +34,20 @@ Basic usage which allows styling of the container but not of separate handles:
 import Resizer from '@codewitchbella/react-resizer'
 
 function MyComponent() {
-    return <Resizer direction="horizontal">
-        <p>Lorem ipsum dolor sit amet</p>
+  return (
+    <Resizer direction="horizontal">
+      <p>Lorem ipsum dolor sit amet</p>
     </Resizer>
+  )
 }
 ```
 
 Usage which allows to customize handles:
 
 ```js
-import Resizer, {
-  ResizerDirection,
-  useResizerHandle,
-  ResizerContainer,
-} from '@codewitchbella/react-resizer'
+import Resizer, { useResizerHandle, ResizerContainer } from '@codewitchbella/react-resizer'
 
-function CustomHandle({ direction }: { direction: ResizerDirection }) {
+function CustomHandle({ direction }) {
   return (
     <div
       style={{
@@ -65,12 +63,14 @@ function CustomHandle({ direction }: { direction: ResizerDirection }) {
 }
 
 function MyComponent() {
-  <ResizerContainer style={{ width: 700, background: 'papayawhip' }}>
-    Lorem ipsum dolor sit amet
-    <CustomHandle direction="vertical" />
-    <CustomHandle direction="horizontal" />
-    <CustomHandle direction="both" />
-  </ResizerContainer>
+  return (
+    <ResizerContainer style={{ width: 700, background: 'papayawhip' }}>
+      Lorem ipsum dolor sit amet
+      <CustomHandle direction="vertical" />
+      <CustomHandle direction="horizontal" />
+      <CustomHandle direction="both" />
+    </ResizerContainer>
+  )
 }
 ```
 
@@ -81,11 +81,6 @@ is supposed to act as the handle.
 This library does not dictate any styling except for setting of width and height
 on the container, but you probably want to set `touch-action: none` on handles.
 
-## API
-
-This component only takes one prop `direction`. Allowed values are `'horizontal'`,
-`'vertical'`, `'none'` and `'both'`. If you omit it `'both'` is implied.
-
 ## Source structure
 
 `src/lib.tsx` contains main source file. Rest is just example app using this
@@ -93,5 +88,8 @@ component where `src/index.tsx` is entrypoint to that app.
 
 ## Developing
 
-To develop this library just run `yarn start`. To build it for consumption by
-other apps run `yarn prepare`.
+First you need to install dependencies which you can do by running `npm install`.
+
+To develop this library just run `npm run start`. To build it for consumption by
+other apps run `npm run prepare`. You can run tests using `npm test` or
+`npm test -- --watch` to run them in watch mode.
