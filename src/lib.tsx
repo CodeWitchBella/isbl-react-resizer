@@ -6,6 +6,9 @@ import React, {
   MutableRefObject,
   useCallback,
   RefObject,
+  createContext,
+  useMemo,
+  useContext,
 } from 'react'
 
 const handleBaseStyle: React.CSSProperties = {
@@ -15,6 +18,11 @@ const handleBaseStyle: React.CSSProperties = {
   color: 'white',
   cursor: 'pointer',
 }
+
+const ResizerContext = createContext<null | {
+  containerRef: RefObject<HTMLDivElement | undefined>
+  setSize: (v: { width?: number; height?: number }) => void
+}>(null)
 
 export default React.forwardRef<HTMLDivElement | null, ResizerProps>(
   function Resizer(
@@ -35,51 +43,87 @@ export default React.forwardRef<HTMLDivElement | null, ResizerProps>(
           boxSizing: 'border-box',
         }}
       >
-        {children}
-        {/* TODO: maybe instead of unicode use SVGs? But who cares, users will probably override it anyway */}
-        <ResizerHandle
-          style={{ left: '100%', top: '50%' }}
-          setSize={({ width }) => setSize(v => ({ ...v, width }))}
-          containerRef={containerRef}
+        <ResizerContext.Provider
+          value={useMemo(
+            () => ({
+              containerRef,
+              setSize: (v: { width?: number; height?: number }) =>
+                setSize(prev => ({ ...prev, ...v })),
+            }),
+            [],
+          )}
         >
-          ↔
-        </ResizerHandle>
-        <ResizerHandle
-          style={{
-            ...handleBaseStyle,
-            left: '50%',
-            top: '100%',
-          }}
-          setSize={({ height }) => setSize(v => ({ ...v, height }))}
-          containerRef={containerRef}
-        >
-          ↕
-        </ResizerHandle>
-        <ResizerHandle
-          style={{
-            ...handleBaseStyle,
-            left: '100%',
-            top: '100%',
-          }}
-          setSize={setSize}
-          containerRef={containerRef}
-        >
-          ⤡
-        </ResizerHandle>
+          {children}
+          {/* TODO: maybe instead of unicode use SVGs? But who cares, users will probably override it anyway */}
+          <ResizerHandle
+            direction="horizontal"
+            style={{ left: '100%', top: '50%' }}
+          >
+            ↔
+          </ResizerHandle>
+          <ResizerHandle
+            direction="vertical"
+            style={{ left: '50%', top: '100%' }}
+          >
+            ↕
+          </ResizerHandle>
+          <ResizerHandle direction="both" style={{ left: '100%', top: '100%' }}>
+            ⤡
+          </ResizerHandle>
+        </ResizerContext.Provider>
       </div>
     )
   },
 )
 
+function useResizerHandle(direction: ResizerDirection = 'both') {
+  const ctx = useContext(ResizerContext)
+  if (!ctx)
+    throw new Error(
+      'useResizerHandle can only be used inside of ResizerContainer',
+    )
+  const { setSize, containerRef } = ctx
+  return {
+    onPointerDown: (downEvent: React.PointerEvent<any>) => {
+      downEvent.preventDefault()
+      downEvent.persist()
+      const boundingRect = containerRef.current!.getBoundingClientRect()
+      function onMove(evt: PointerEvent) {
+        if (evt.pointerId !== downEvent.pointerId) return
+        evt.preventDefault()
+        evt.stopPropagation()
+        const width = boundingRect.width + evt.screenX - downEvent.screenX
+        const height = boundingRect.height + evt.screenY - downEvent.screenY
+        setSize(
+          direction === 'both'
+            ? { width, height }
+            : direction === 'horizontal'
+            ? { width }
+            : direction === 'vertical'
+            ? { height }
+            : {},
+        )
+      }
+      document.addEventListener('pointermove', onMove, { capture: true })
+      function onUp(evt: PointerEvent) {
+        if (evt.pointerId !== downEvent.pointerId) return
+        evt.preventDefault()
+        evt.stopPropagation()
+        document.removeEventListener('pointermove', onMove, { capture: true })
+        document.removeEventListener('pointerup', onUp, { capture: true })
+      }
+      document.addEventListener('pointerup', onUp, { capture: true })
+    },
+  }
+}
+
 function ResizerHandle({
   style,
   children,
-  setSize,
-  containerRef,
+  direction,
 }: PropsWithChildren<{
   style: React.CSSProperties
-  setSize: (v: { width: number; height: number }) => void
-  containerRef: RefObject<HTMLDivElement | undefined>
+  direction?: ResizerDirection
 }>) {
   return (
     <div
@@ -87,29 +131,7 @@ function ResizerHandle({
         ...handleBaseStyle,
         ...style,
       }}
-      onPointerDown={downEvent => {
-        downEvent.preventDefault()
-        downEvent.persist()
-        const boundingRect = containerRef.current!.getBoundingClientRect()
-        function onMove(evt: PointerEvent) {
-          if (evt.pointerId !== downEvent.pointerId) return
-          evt.preventDefault()
-          evt.stopPropagation()
-          setSize({
-            width: boundingRect.width + evt.screenX - downEvent.screenX,
-            height: boundingRect.height + evt.screenY - downEvent.screenY,
-          })
-        }
-        document.addEventListener('pointermove', onMove, { capture: true })
-        function onUp(evt: PointerEvent) {
-          if (evt.pointerId !== downEvent.pointerId) return
-          evt.preventDefault()
-          evt.stopPropagation()
-          document.removeEventListener('pointermove', onMove, { capture: true })
-          document.removeEventListener('pointerup', onUp, { capture: true })
-        }
-        document.addEventListener('pointerup', onUp, { capture: true })
-      }}
+      {...useResizerHandle(direction)}
     >
       {children}
     </div>
