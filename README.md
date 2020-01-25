@@ -92,4 +92,5 @@ First you need to install dependencies which you can do by running `npm install`
 
 To develop this library just run `npm run start`. To build it for consumption by
 other apps run `npm run prepare`. You can run tests using `npm test` or
-`npm test -- --watch` to run them in watch mode.
+`npm test -- --watch` to run them in watch mode. For tests to work you have to
+have dev server running.

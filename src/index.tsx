@@ -56,6 +56,7 @@ function App() {
   return (
     <div>
       <Resizer
+        id="resizer-both"
         style={{
           background: 'green',
           padding: 20,
@@ -67,6 +68,7 @@ function App() {
         Hello world
       </Resizer>
       <Resizer
+        id="resizer-vertical"
         direction="vertical"
         style={{
           background: 'green',
@@ -80,6 +82,7 @@ function App() {
       </Resizer>
 
       <Resizer
+        id="resizer-horizontal"
         direction="horizontal"
         style={{
           background: 'green',

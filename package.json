@@ -14,7 +14,7 @@
   "scripts": {
     "start": "react-scripts start",
     "prepare": "microbundle",
-    "test": "jest"
+    "test": "react-scripts test"
   },
   "peerDependencies": {
     "react": "^16.12.0"
