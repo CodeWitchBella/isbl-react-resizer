@@ -1,6 +1,6 @@
 {
   "name": "@codewitchbella/react-resizer",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Resizer component for react",
   "source": "src/lib.tsx",
   "main": "build/lib.js",
