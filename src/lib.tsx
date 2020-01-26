@@ -28,6 +28,8 @@ const ResizerContext = createContext<null | {
   setSize: (v: { width?: number; height?: number }) => void
 }>(null)
 
+const pointerEventsSupported = typeof PointerEvent !== 'undefined'
+
 export default React.forwardRef<HTMLDivElement | null, ResizerProps>(
   function Resizer(
     { children, direction = 'both', style = {}, ...rest },
@@ -106,38 +108,51 @@ export function useResizerHandle(direction: ResizerDirection = 'both') {
       'useResizerHandle can only be used inside of ResizerContainer',
     )
   const { setSize, containerRef } = ctx
-  return {
-    onPointerDown: (downEvent: React.PointerEvent<any>) => {
-      downEvent.preventDefault()
-      downEvent.persist()
-      const boundingRect = containerRef.current!.getBoundingClientRect()
-      function onMove(evt: PointerEvent) {
-        if (evt.pointerId !== downEvent.pointerId) return
-        evt.preventDefault()
-        evt.stopPropagation()
-        const width = boundingRect.width + evt.clientX - downEvent.clientX
-        const height = boundingRect.height + evt.clientY - downEvent.clientY
-        setSize(
-          direction === 'both'
-            ? { width, height }
-            : direction === 'horizontal'
-            ? { width }
-            : direction === 'vertical'
-            ? { height }
-            : {},
-        )
-      }
-      document.addEventListener('pointermove', onMove, { capture: true })
-      function onUp(evt: PointerEvent) {
-        if (evt.pointerId !== downEvent.pointerId) return
-        evt.preventDefault()
-        evt.stopPropagation()
-        document.removeEventListener('pointermove', onMove, { capture: true })
-        document.removeEventListener('pointerup', onUp, { capture: true })
-      }
-      document.addEventListener('pointerup', onUp, { capture: true })
-    },
+
+  function getPointerId(evt: { pointerId: number } | {}) {
+    if ('pointerId' in evt) return evt.pointerId
+    return -1
   }
+
+  const moveEvent = pointerEventsSupported ? 'pointermove' : 'mousemove'
+  const upEvent = pointerEventsSupported ? 'pointerup' : 'mouseup'
+  function handleDown(
+    downEvent: React.MouseEvent<any> | React.PointerEvent<any>,
+  ) {
+    downEvent.preventDefault()
+    downEvent.persist()
+    const boundingRect = containerRef.current!.getBoundingClientRect()
+    function onMove(evt: MouseEvent) {
+      if (getPointerId(evt) !== getPointerId(downEvent)) return
+      evt.preventDefault()
+      evt.stopPropagation()
+      const width = boundingRect.width + evt.clientX - downEvent.clientX
+      const height = boundingRect.height + evt.clientY - downEvent.clientY
+      setSize(
+        direction === 'both'
+          ? { width, height }
+          : direction === 'horizontal'
+          ? { width }
+          : direction === 'vertical'
+          ? { height }
+          : {},
+      )
+    }
+    document.addEventListener(moveEvent, onMove, { capture: true })
+    function onUp(evt: MouseEvent) {
+      if (getPointerId(evt) !== getPointerId(downEvent)) return
+      evt.preventDefault()
+      evt.stopPropagation()
+      document.removeEventListener(moveEvent, onMove, { capture: true })
+      document.removeEventListener(upEvent, onUp, { capture: true })
+    }
+    document.addEventListener(upEvent, onUp, { capture: true })
+  }
+
+  if (!pointerEventsSupported) {
+    return { onMouseDown: handleDown }
+  }
+  return { onPointerDown: handleDown }
 }
 
 function ResizerHandle({
