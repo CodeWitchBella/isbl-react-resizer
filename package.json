@@ -1,6 +1,6 @@
 {
   "name": "@isbl/react-resizer",
-  "version": "0.1.2",
+  "version": "0.2.0",
   "description": "Resizer component for react",
   "source": "src/lib.tsx",
   "exports": {
