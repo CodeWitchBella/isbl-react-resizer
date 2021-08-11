@@ -1,18 +1,19 @@
-import React, {
-  PropsWithChildren,
-  Ref,
-  MutableRefObject,
-  RefObject,
-} from 'react'
-
-const {
+import {
   useCallback,
   useMemo,
   useState,
   useRef,
   useContext,
   createContext,
-} = React
+  forwardRef,
+} from 'react'
+import type {
+  default as React,
+  PropsWithChildren,
+  Ref,
+  MutableRefObject,
+  RefObject,
+} from 'react'
 
 const handleBaseStyle: React.CSSProperties = {
   position: 'absolute',
@@ -30,76 +31,73 @@ const ResizerContext = createContext<null | {
 
 const pointerEventsSupported = typeof PointerEvent !== 'undefined'
 
-export default React.forwardRef<HTMLDivElement | null, ResizerProps>(
-  function Resizer(
-    { children, direction = 'both', style = {}, ...rest },
-    externalRef,
-  ) {
+export default forwardRef<HTMLDivElement | null, ResizerProps>(function Resizer(
+  { children, direction = 'both', style = {}, ...rest },
+  externalRef,
+) {
+  return (
+    <ResizerContainer
+      {...rest}
+      style={{ ...style, position: 'relative' }}
+      ref={externalRef}
+    >
+      {children}
+      {direction === 'horizontal' || direction === 'both' ? (
+        <ResizerHandle
+          direction="horizontal"
+          style={{ left: '100%', top: '50%' }}
+        >
+          ↔
+        </ResizerHandle>
+      ) : null}
+      {direction === 'vertical' || direction === 'both' ? (
+        <ResizerHandle
+          direction="vertical"
+          style={{ left: '50%', top: '100%' }}
+        >
+          ↕
+        </ResizerHandle>
+      ) : null}
+      {direction === 'both' ? (
+        <ResizerHandle direction="both" style={{ left: '100%', top: '100%' }}>
+          ⤡
+        </ResizerHandle>
+      ) : null}
+    </ResizerContainer>
+  )
+})
+
+export const ResizerContainer = forwardRef<HTMLDivElement | null, DivProps>(
+  ({ children, style, ...rest }, externalRef) => {
+    const [size, setSize] = useState<{ width?: number; height?: number }>({})
+    const containerRef = useRef<HTMLDivElement>()
+
     return (
-      <ResizerContainer
+      <div
         {...rest}
-        style={{ ...style, position: 'relative' }}
-        ref={externalRef}
+        ref={useComposeRefs(containerRef, externalRef)}
+        style={{
+          ...style,
+          ...size,
+          boxSizing: 'border-box',
+        }}
       >
-        {children}
-        {direction === 'horizontal' || direction === 'both' ? (
-          <ResizerHandle
-            direction="horizontal"
-            style={{ left: '100%', top: '50%' }}
-          >
-            ↔
-          </ResizerHandle>
-        ) : null}
-        {direction === 'vertical' || direction === 'both' ? (
-          <ResizerHandle
-            direction="vertical"
-            style={{ left: '50%', top: '100%' }}
-          >
-            ↕
-          </ResizerHandle>
-        ) : null}
-        {direction === 'both' ? (
-          <ResizerHandle direction="both" style={{ left: '100%', top: '100%' }}>
-            ⤡
-          </ResizerHandle>
-        ) : null}
-      </ResizerContainer>
+        <ResizerContext.Provider
+          value={useMemo(
+            () => ({
+              containerRef,
+              setSize: (v: { width?: number; height?: number }) =>
+                setSize((prev) => ({ ...prev, ...v })),
+            }),
+            [],
+          )}
+        >
+          {children}
+        </ResizerContext.Provider>
+      </div>
     )
   },
 )
-
-export const ResizerContainer = React.forwardRef<
-  HTMLDivElement | null,
-  DivProps
->(({ children, style, ...rest }, externalRef) => {
-  const [size, setSize] = useState<{ width?: number; height?: number }>({})
-  const containerRef = useRef<HTMLDivElement>()
-
-  return (
-    <div
-      {...rest}
-      ref={useComposeRefs(containerRef, externalRef)}
-      style={{
-        ...style,
-        ...size,
-        boxSizing: 'border-box',
-      }}
-    >
-      <ResizerContext.Provider
-        value={useMemo(
-          () => ({
-            containerRef,
-            setSize: (v: { width?: number; height?: number }) =>
-              setSize(prev => ({ ...prev, ...v })),
-          }),
-          [],
-        )}
-      >
-        {children}
-      </ResizerContext.Provider>
-    </div>
-  )
-})
 
 export function useResizerHandle(direction: ResizerDirection = 'both') {
   const ctx = useContext(ResizerContext)

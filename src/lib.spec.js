@@ -3,8 +3,8 @@ import fetch from 'node-fetch'
 
 for (const browserType of ['chromium', 'firefox']) {
   describe('should work in ' + browserType, () => {
-    let browser
-    let context
+    const after = [async () => {}]
+
     let ended = false
     async function tryConnect() {
       while (!ended) {
@@ -12,17 +12,24 @@ for (const browserType of ['chromium', 'firefox']) {
           await fetch('http://localhost:3000')
           break
         } catch {
-          await new Promise(r => setTimeout(r, 100))
+          await new Promise((r) => setTimeout(r, 100))
         }
       }
     }
-
-    jest.setTimeout(15000)
-    beforeAll(async () => {
-      browser = await playwright[browserType].launch()
-      context = await browser.newContext()
-      await tryConnect()
+    afterAll(async () => {
+      ended = true
+      after.reverse()
+      for (const ender of after) await ender()
     })
+
+    async function createPage() {
+      const browser = await playwright[browserType].launch()
+      after.push(() => browser.close())
+      const context = await browser.newContext()
+      await tryConnect()
+      return context.newPage()
+    }
+
     jest.setTimeout(5000)
 
     async function drag(page, selector, relative) {
@@ -43,10 +50,10 @@ for (const browserType of ['chromium', 'firefox']) {
     }
 
     test('Resizer(both) has three handles and they work', async () => {
-      const page = await context.newPage()
+      const page = await createPage()
       await page.goto('http://localhost:3000/')
 
-      expect(await page.$$eval('#resizer-both div', l => l.length)).toBe(3)
+      expect(await page.$$eval('#resizer-both div', (l) => l.length)).toBe(3)
 
       // drag horizontal resizer
       await drag(page, '#resizer-both div:nth-of-type(1)', { x: 200, y: 200 })
@@ -70,9 +77,11 @@ for (const browserType of ['chromium', 'firefox']) {
     //await page.screenshot({ path: 'after-' + browserType + '.png' })
 
     test('Resizer(vertical) has one handle and it works', async () => {
-      const page = await context.newPage()
+      const page = await createPage()
       await page.goto('http://localhost:3000/')
-      expect(await page.$$eval('#resizer-vertical div', l => l.length)).toBe(1)
+      expect(await page.$$eval('#resizer-vertical div', (l) => l.length)).toBe(
+        1,
+      )
 
       // drag horizontal resizer
       await drag(page, '#resizer-vertical div:nth-of-type(1)', {
@@ -87,11 +96,11 @@ for (const browserType of ['chromium', 'firefox']) {
     })
 
     test('Resizer(horizontal) has one handle and it works', async () => {
-      const page = await context.newPage()
+      const page = await createPage()
       await page.goto('http://localhost:3000/')
-      expect(await page.$$eval('#resizer-horizontal div', l => l.length)).toBe(
-        1,
-      )
+      expect(
+        await page.$$eval('#resizer-horizontal div', (l) => l.length),
+      ).toBe(1)
 
       // drag horizontal resizer
       await drag(page, '#resizer-horizontal div:nth-of-type(1)', {
@@ -106,7 +115,7 @@ for (const browserType of ['chromium', 'firefox']) {
     })
 
     test('Custom handles (sidebar) should work', async () => {
-      const page = await context.newPage()
+      const page = await createPage()
       await page.goto('http://localhost:3000/')
 
       // width before changes should respect css
@@ -136,11 +145,6 @@ for (const browserType of ['chromium', 'firefox']) {
         y: 200,
       })
       expect((await getBB(page, '#sidebar')).width).toBe(200)
-    })
-
-    afterAll(async () => {
-      ended = true
-      await browser.close()
     })
   })
 }
