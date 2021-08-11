@@ -27,3 +27,4 @@ yarn-error.log*
 *.png
 # npm pack
 codewitchbella-*
+isbl-*

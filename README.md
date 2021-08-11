@@ -20,18 +20,18 @@ This library does the following:
 
 ## Install
 
-`yarn add @codewitchbella/react-resizer`
+`yarn add @isbl/react-resizer`
 
 or
 
-`npm i @codewitchbella/react-resizer`
+`npm i @isbl/react-resizer`
 
 ## Usage
 
 Basic usage which allows styling of the container but not of separate handles:
 
 ```js
-import Resizer from '@codewitchbella/react-resizer'
+import Resizer from '@isbl/react-resizer'
 
 function MyComponent() {
   return (
@@ -45,7 +45,7 @@ function MyComponent() {
 Usage which allows to customize handles:
 
 ```js
-import Resizer, { useResizerHandle, ResizerContainer } from '@codewitchbella/react-resizer'
+import Resizer, { useResizerHandle, ResizerContainer } from '@isbl/react-resizer'
 
 function CustomHandle({ direction }) {
   return (
