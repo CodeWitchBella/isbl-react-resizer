@@ -1,6 +1,6 @@
 {
   "name": "@isbl/react-resizer",
-  "version": "0.2.2",
+  "version": "0.2.3",
   "description": "Resizer component for react",
   "source": "src/lib.tsx",
   "exports": {
@@ -19,7 +19,7 @@
     "start": "react-scripts start",
     "prepare": "microbundle -f modern --jsxImportSource react",
     "prepublishOnly": "isbl-publisher prepublishOnly",
-    "publish:npm": "yarn prepare && isbl-publisher publish",
+    "publish:npm": "isbl-publisher publish --no-draft",
     "test": "react-scripts test"
   },
   "files": [
@@ -34,7 +34,7 @@
     "react": "^16.14.0||^17.0.0"
   },
   "devDependencies": {
-    "@isbl/publisher": "^0.4.1",
+    "@isbl/publisher": "^0.7.1",
     "@types/jest": "^27.0.0",
     "@types/node": "^16.4.13",
     "@types/react": "^17.0.17",
