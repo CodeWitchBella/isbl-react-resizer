@@ -1,4 +1,10 @@
-# React Resizer
+# @isbl/react-resizer
+
+[![MIT License](https://img.shields.io/npm/l/@isbl/react-resizer?style=flat)](https://github.com/CodeWitchBella/isbl-react-resizer/blob/main/LICENSE)
+[![npm](https://img.shields.io/npm/v/@isbl/react-resizer?style=flat)](https://www.npmjs.com/package/@isbl/react-resizer)
+[![dependencies](https://img.shields.io/librariesio/release/npm/@isbl/react-resizer?style=flat)](https://github.com/CodeWitchBella/isbl-react-resizer/blob/main/package.json)
+![](https://img.shields.io/github/last-commit/CodeWitchBella/isbl-react-resizer?style=flat)
+[![Releases](https://img.shields.io/github/release-date/CodeWitchBella/isbl-react-resizer?style=flat)](https://github.com/CodeWitchBella/isbl-react-resizer/releases)
 
 Resizable component. But first please ask yourself if you need it, because you
 can just set:
