@@ -1,12 +1,12 @@
 {
   "name": "@isbl/react-resizer",
-  "version": "0.2.3",
+  "version": "0.2.4",
   "description": "Resizer component for react",
   "source": "src/lib.tsx",
   "exports": {
-    ".": "./dist/react-resizer.modern.js"
+    ".": "./dist/lib.js"
   },
-  "types": "dist/react-resizer.d.ts",
+  "types": "dist/lib.d.ts",
   "repository": {
     "type": "git",
     "url": "https://github.com/CodeWitchBella/isbl-react-resizer.git"
@@ -17,13 +17,13 @@
   "type": "module",
   "scripts": {
     "start": "react-scripts start",
-    "prepare": "microbundle -f modern --jsxImportSource react",
+    "prepare": "microbundle -f modern --jsxImportSource react --output ./dist/lib.js",
     "prepublishOnly": "isbl-publisher prepublishOnly",
     "publish:npm": "isbl-publisher publish --no-draft",
     "test": "react-scripts test"
   },
   "files": [
-    "build/lib.*",
+    "dist/lib.*",
     "src/lib.tsx",
     "README.md"
   ],
